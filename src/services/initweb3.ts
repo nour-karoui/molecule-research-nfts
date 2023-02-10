@@ -1,5 +1,6 @@
 import { ExternalProvider } from "@ethersproject/providers";
 import {ethers} from "ethers";
+import {collectionsFactoryAddress, collectionsFactoryABI} from '../contracts/collectionsFactory';
 
 declare global {
   interface Window {
@@ -11,6 +12,4 @@ export const provider = window.ethereum ? new ethers.providers.Web3Provider(wind
 
 export const signer = provider? provider.getSigner(): undefined;
 
-// export const projectsFactory = new ethers.Contract(projectsFactoryAddress, projectsFactoryABI, signer);
-
-// export const RVLToken = new ethers.Contract(rvlTokenAddress, rvlTokenABI, signer);
+export const collectionsFactory = new ethers.Contract(collectionsFactoryAddress, collectionsFactoryABI, signer);

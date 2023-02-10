@@ -1,26 +1,52 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Header from "./components/Header";
+import {createTheme, ThemeProvider} from '@mui/material/styles'
+import CollectionsList from "./components/collections/CollectionsList";
+import PatentForm from "./components/patents/PatentForm";
+import {Alert, AlertTitle, Grid} from "@mui/material";
+import {fetchCollections} from "./services/fetchCollections";
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#3C79F5',
+        },
+        secondary: {
+            main: '#098292'
+        },
+        info: {
+            main: '#f0e6d5'
+        }
+    }
+});
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            {
+                window.ethereum ?
+                    <div>
+                        <Header/>
+                        <Grid container>
+                            <Grid xs={6}>
+                                <CollectionsList/>
+                            </Grid>
+                            <Grid xs={6} marginTop={'60px'}>
+                                <PatentForm/>
+                            </Grid>
+                        </Grid>
+                    </div>
+                    :
+                    <div>
+                        <Alert severity="error">
+                            <AlertTitle>Error</AlertTitle>
+                            You're Not Connected to the Blockchain — <strong>Add metamask wallet !</strong>
+                        </Alert>
+                    </div>
+            }
+        </ThemeProvider>
+    );
 }
 
 export default App;
