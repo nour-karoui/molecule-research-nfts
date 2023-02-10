@@ -1,26 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Header from "./components/Header";
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import SearchBar from "./components/SearchBar";
+import CollectionsList from "./components/collections/CollectionsList";
+import CollectionsListItem from "./components/collections/CollectionsListItem";
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#1BD6DD',
+        },
+        secondary: {
+            main: '#01213a'
+        }
+    }
+});
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            <Header/>
+            <SearchBar inputUpdated={(a) => void console.log(a)}
+                       addCollection={() => console.log("collection added")}/>
+            <CollectionsList/>
+        </ThemeProvider>
+    );
 }
 
 export default App;
