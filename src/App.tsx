@@ -47,7 +47,7 @@ function App() {
                     <CollectionsList collections={data}/>
                 </Grid>
                 <Grid xs={6} marginTop={'60px'}>
-                    <PatentForm/>
+                    <PatentForm collection={'Physics'}/>
                 </Grid>
             </Grid>
         </ThemeProvider>
