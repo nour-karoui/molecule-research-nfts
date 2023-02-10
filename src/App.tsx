@@ -3,6 +3,8 @@ import './App.css';
 import Header from "./components/Header";
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CollectionsList from "./components/collections/CollectionsList";
+import PatentForm from "./components/patents/PatentForm";
+import {Grid} from "@mui/material";
 
 const theme = createTheme({
     palette: {
@@ -40,7 +42,14 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <Header/>
-            <CollectionsList collections={data}/>
+            <Grid container>
+                <Grid xs={6}>
+                    <CollectionsList collections={data}/>
+                </Grid>
+                <Grid xs={6} marginTop={'60px'}>
+                    <PatentForm/>
+                </Grid>
+            </Grid>
         </ThemeProvider>
     );
 }

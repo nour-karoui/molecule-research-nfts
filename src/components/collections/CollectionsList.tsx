@@ -25,7 +25,7 @@ function CollectionsList({collections}: CollectionsListProps) {
             .includes(clause.toLowerCase())));
 
     return (
-            <Box width={'600px'} paddingTop={'20px'}>
+            <Box paddingTop={'20px'}>
                 <div style={{paddingBottom: '10px'}}>
                     <SearchBar inputUpdated={(input) => filterCollections(input)}
                                addCollection={() => console.log("collection added")}/>
