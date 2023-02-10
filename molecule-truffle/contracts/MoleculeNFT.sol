@@ -10,14 +10,12 @@ contract MoleculeNFT is ERC721URIStorage, Ownable {
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
 
-  struct MintedNFT {
-    uint256 nftCount;
-    mapping(uint256 => uint256) mintedNFTs;
-  }
   mapping(address => bool) public approvedMinters;
   uint256 public approvedMintersCount;
-  mapping(address => MintedNFT) public mintedNFTs;
-  uint256 public mintersCount;
+
+  mapping(address => uint256) public mintedPatents;
+  uint256 public totalMintedPatentsCount;
+
   event AddMinter(address minter, uint256 currentCount);
   event RevokeMinter(address minter, uint256 currentCount);
 
@@ -25,32 +23,37 @@ contract MoleculeNFT is ERC721URIStorage, Ownable {
     transferOwnership(_owner);
   }
 
-  function revokeMinters(address _minter) payable public onlyOwner {
+  function revokeMinter(address _minter) payable public onlyOwner {
     require(approvedMinters[_minter] == true, 'This minter does not exist');
     approvedMinters[_minter] = false;
-    mintersCount -= 1;
-    emit RevokeMinter(_minter, mintersCount);
+    approvedMintersCount -= 1;
+    emit RevokeMinter(_minter, approvedMintersCount);
   }
 
   function addMinter(address _minter) payable public onlyOwner {
     require(approvedMinters[_minter] == false, 'This minter already exists');
     approvedMinters[_minter] = true;
-    mintersCount += 1;
-    emit AddMinter(_minter, mintersCount);
+    approvedMintersCount += 1;
+    emit AddMinter(_minter, approvedMintersCount);
   }
 
-  function mintProject() payable public returns(uint256){
+  function mintPatent() payable public returns(uint256, uint256){
     require(approvedMinters[msg.sender] == true, "You are not considered as a minter, please contact the admin");
-    uint256 newItemId = _tokenIds.current();
-    _mint(msg.sender, newItemId);
-    mintedNFTs[msg.sender].mintedNFTs[mintedNFTs[msg.sender].nftCount] = newItemId;
-    mintedNFTs[msg.sender].nftCount += 1;
+    uint256 tokenId = _tokenIds.current();
+    _mint(msg.sender, tokenId);
+    totalMintedPatentsCount += 1;
+    mintedPatents[msg.sender] += 1;
+    approvedMinters[msg.sender] = false;
     _tokenIds.increment();
-    return newItemId;
+    return (tokenId, totalMintedPatentsCount);
+  }
+
+  function getMinterCount(address _minter) view public returns(uint256) {
+    return mintedPatents[_minter];
   }
 
   function setTokenURI(uint256 tokenId, string memory _tokenURI) public payable {
-    require(ownerOf(tokenId) == msg.sender, "Sorry but youy are not the owner of this NFT");
+    require(ownerOf(tokenId) == msg.sender, "Sorry but you are not the owner of this NFT");
     _setTokenURI(tokenId, _tokenURI);
   }
 }
