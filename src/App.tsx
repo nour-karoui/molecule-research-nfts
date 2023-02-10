@@ -2,17 +2,18 @@ import React from 'react';
 import './App.css';
 import Header from "./components/Header";
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import SearchBar from "./components/SearchBar";
 import CollectionsList from "./components/collections/CollectionsList";
-import CollectionsListItem from "./components/collections/CollectionsListItem";
 
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#1BD6DD',
+            main: '#3C79F5',
         },
         secondary: {
-            main: '#01213a'
+            main: '#098292'
+        },
+        info: {
+            main: '#f0e6d5'
         }
     }
 });

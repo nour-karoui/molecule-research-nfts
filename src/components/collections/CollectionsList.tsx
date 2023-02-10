@@ -1,5 +1,5 @@
 import CollectionsListItem from "./CollectionsListItem";
-import React, {Fragment, useState} from "react";
+import { useState} from "react";
 import {Box} from "@mui/material";
 import SearchBar from "../SearchBar";
 

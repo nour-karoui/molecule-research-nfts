@@ -12,7 +12,7 @@ function Header() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Molecule
                     </Typography>
-                    <Button variant="outlined" color="secondary">
+                    <Button variant="outlined" color="info">
                         Connect with MetaMask
                     </Button>
                 </Toolbar>
