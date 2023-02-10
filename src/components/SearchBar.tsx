@@ -1,4 +1,4 @@
-import {Box, Grid, TextField} from "@mui/material";
+import {Box, Button, Grid, TextField} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
@@ -21,10 +21,10 @@ function SearchBar({inputUpdated, addCollection}: SearchBarProps) {
 
     return (
       <Grid container>
-          <Grid>
+          <Grid sx={{ flexGrow: 1 }} style={{paddingRight: '40px'}}>
               <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                   <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-                  <TextField label="" placeholder="search ..." sx={{ flexGrow: 1 }}
+                  <TextField label="" placeholder="Search ..." sx={{ flexGrow: 1 }}
                              onChange={(event: ChangeEvent<HTMLInputElement>) => {
                                  onInputChange(event.target.value);
                              }}
@@ -32,9 +32,9 @@ function SearchBar({inputUpdated, addCollection}: SearchBarProps) {
               </Box>
           </Grid>
           <Grid>
-              <IconButton color="success" onClick={onAddCollection}>
+              <Button color="success" onClick={onAddCollection} variant='contained'>
                   <AddIcon />
-              </IconButton>
+              </Button>
           </Grid>
       </Grid>
     );

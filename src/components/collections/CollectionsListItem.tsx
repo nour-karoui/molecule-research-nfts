@@ -12,19 +12,19 @@ function CollectionsListItem({name, symbol, owner}: CollectionsListItemProps) {
         <Card variant="outlined">
             <CardContent>
                 <Grid container spacing={'10px'} alignItems="center">
-                    <Grid item xs={0.8}>
+                    <Grid item xs={2}>
                         {owner && <Chip label="owner" color="success" size='small'
                                         icon={<FiberManualRecordIcon style={{transform: 'scale(0.5)'}}/>}
                                         variant="outlined"/>}
                     </Grid>
-                    <Grid item>
-                        <div style={{fontWeight: 'bold'}} >{symbol}</div>
+                    <Grid item sx={{ flexGrow: 1 }}>
+                        <span> {name} </span>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <div style={{fontWeight: 'bold', marginRight: '40px'}} >({symbol})</div>
                     </Grid>
                     <Grid item>
-                        <span style={{marginRight: '40px'}}> {name} </span>
-                    </Grid>
-                    <Grid item>
-                        <Button color={'secondary'} variant={'contained'}>Add patent</Button>
+                        <Button color={'secondary'} variant={'outlined'}>Add patent</Button>
                     </Grid>
                 </Grid>
             </CardContent>

@@ -17,13 +17,29 @@ const theme = createTheme({
     }
 });
 
+const data = [
+    {
+        name: "Physics",
+        symbol: "PHY",
+        owner: "x1f458983",
+    },
+    {
+        name: "Chemistry",
+        symbol: "CHE",
+        owner: "x1fe23458983",
+    },
+    {
+        name: "Biology",
+        symbol: "BIO",
+        owner: "x123458983",
+    },
+]
+
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <Header/>
-            <SearchBar inputUpdated={(a) => void console.log(a)}
-                       addCollection={() => console.log("collection added")}/>
-            <CollectionsList/>
+            <CollectionsList collections={data}/>
         </ThemeProvider>
     );
 }
