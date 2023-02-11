@@ -5,7 +5,6 @@ import {createTheme, ThemeProvider} from '@mui/material/styles'
 import CollectionsList from "./components/collections/CollectionsList";
 import PatentForm from "./components/patents/PatentForm";
 import {Alert, AlertTitle, Grid} from "@mui/material";
-import {fetchCollections} from "./services/fetchCollections";
 
 const theme = createTheme({
     palette: {
@@ -33,7 +32,7 @@ function App() {
                                 <CollectionsList/>
                             </Grid>
                             <Grid xs={6} marginTop={'60px'}>
-                                <PatentForm/>
+                                <PatentForm collection={'test'}/>
                             </Grid>
                         </Grid>
                     </div>

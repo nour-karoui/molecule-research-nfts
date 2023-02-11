@@ -40,11 +40,10 @@ function CollectionsList() {
                                addCollection={() => console.log("collection added")}/>
                 </div>
                 {
-                    collections && collections.map((collection) =>
-                        <CollectionsListItem name={collection.name}
-                                             symbol={collection.symbol}
+                    collections && collections.map((collection: Collection) =>
+                        <CollectionsListItem collection={collection}
                                              key={collection.symbol}
-                                             owner={collection.owner === currentAccount}/>)
+                                             isOwner={collection.owner === currentAccount}/>)
                 }
             </Box>
     );
