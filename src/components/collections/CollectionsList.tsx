@@ -10,6 +10,7 @@ function CollectionsList() {
     const [currentAccount, setCurrentAccount] = useState<any>();
     const [collections, setCollections] = useState<Collection[]>([]);
     const [collectionsFetched, setCollectionsFetched] = useState<Boolean>(false);
+    const [collectionsData, setCollectionsData] = useState<Collection[]>([]);
     useEffect(() => {
         fetchAvailableCollections();
         setAccount(provider?.getSigner());
@@ -24,12 +25,15 @@ function CollectionsList() {
         if(!collectionsFetched) {
             const collections = await fetchCollections();
             setCollections(collections);
+            setCollectionsData(collections)
             setCollectionsFetched(true);
         }
     }
 
-    const filterCollections = (clause: string) => setCollections(
-        collections.filter(
+    const filterCollections = (clause: string) => clause === "" ?
+        setCollectionsData(collections) :
+        setCollectionsData(
+            collections.filter(
             collection => collection.name.toLowerCase()
             .includes(clause.toLowerCase())));
 
@@ -40,7 +44,7 @@ function CollectionsList() {
                                addCollection={() => console.log("collection added")}/>
                 </div>
                 {
-                    collections && collections.map((collection: Collection) =>
+                    collectionsData && collectionsData.map((collection: Collection) =>
                         <CollectionsListItem collection={collection}
                                              key={collection.symbol}
                                              isOwner={collection.owner === currentAccount}/>)

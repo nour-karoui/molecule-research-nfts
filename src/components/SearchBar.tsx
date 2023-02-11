@@ -1,7 +1,6 @@
 import {Box, Button, Grid, TextField} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
-import IconButton from '@mui/material/IconButton';
 import {ChangeEvent} from "react";
 
 interface SearchBarProps {

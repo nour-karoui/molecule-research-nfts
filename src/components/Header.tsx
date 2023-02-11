@@ -3,7 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Snackbar from '@mui/material/Snackbar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {Box, Button, Grid} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {ethers} from "ethers";
 import {provider} from "../services/initweb3";
