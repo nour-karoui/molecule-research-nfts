@@ -7,7 +7,7 @@ import {Error, Success} from "../../services/responses";
 
 interface PatentFormProps {
     collectionName: string;
-    patentAddedCallback?: (collectionName: string) => any;
+    patentAddedCallback?: (collectionName: string, patentId: string) => any;
 }
 
 function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
@@ -59,7 +59,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     const validateSubject = (value: string) => {
         setSubjectPristine(false);
         setSubjectValid(value.trim() !== "");
-        setSubject(value.trim());
+        setSubject(value);
     }
 
     const validateResearcher = (value: string) => {
@@ -142,7 +142,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
             console.info(`token URI ${result} added to NFT with id ${tokenId}`);
             setOpenSeaUrl(`https://testnets.opensea.io/assets/goerli/${collectionNFT.address}/${tokenId}`);
             setSuccessMessage(`form submitted successfully, check your NFT at ${openSeaUrl}`);
-            if (patentAddedCallback) patentAddedCallback(collectionName);
+            if (patentAddedCallback) patentAddedCallback(collectionName.trim(), patentId.trim());
             setSuccessOpen(true);
         }
         catch (e: any) {
@@ -176,7 +176,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
             <Success open={successOpen} handleClose={handleSuccessClose} message={successMessage}></Success>
             <Error open={errorOpen} handleClose={handleErrorClose} message={errorMessage}></Error>
             <Grid container>
-                <h2>Add patent to {collectionName} Collection</h2>
+                <h2>Add patent to <span style={{textDecoration: 'underline'}}>{collectionName}</span> Collection</h2>
             </Grid>
             <Grid container>
                 <TextField label="Subject" value={subject}
