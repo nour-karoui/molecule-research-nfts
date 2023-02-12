@@ -1,4 +1,4 @@
-import {Button, Card, CardContent, Chip, Grid} from "@mui/material";
+import {Button, Card, CardContent, Chip, Grid, TextField} from "@mui/material";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {Collection} from "../../services/fetchCollections";
 import {getCollectionNFT} from "../../services/initweb3";
@@ -21,6 +21,7 @@ function CollectionsListItem({
                              }: CollectionsListItemProps) {
     const [collectionNFT, setCollectionNFT] = useState<any>(null);
     const [availableMinters, setAvailableMinters] = useState(0);
+    const [addressInput, setAddressInput] = useState("")
 
     const setSmartContract = async () => {
         if (!collectionNFT) {
@@ -78,16 +79,20 @@ function CollectionsListItem({
                     </Grid>
                 </Grid>
                 {
-                    isOwner ?
-                        <Grid>
-                            <div>
-                                <input ref={textInput} type="text"/>
-                                <button onClick={onAddAddress}>Add</button>
-                                <button onClick={onRevokeAddress}>Revoke</button>
-                            </div>
+                    isOwner &&
+                        <Grid container paddingTop="20px" spacing={2} alignItems="center">
+                            <Grid item sx={{flexGrow: 1}}>
+                                <TextField value={addressInput} label="Minter's Address" placeholder="0x85fF0e5399f97..."
+                                           onChange={(e) => setAddressInput(e.target.value)}
+                                           variant='standard' fullWidth/>
+                            </Grid>
+                            <Grid item>
+                                <Button variant="outlined" onClick={onAddAddress} color="success">Add</Button>
+                            </Grid>
+                            <Grid item>
+                                <Button variant="outlined" onClick={onRevokeAddress} color="error">Revoke</Button>
+                            </Grid>
                         </Grid>
-                        :
-                        <div></div>
                 }
             </CardContent>
         </Card>
