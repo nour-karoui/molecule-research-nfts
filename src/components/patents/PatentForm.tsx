@@ -5,10 +5,11 @@ import * as crypto from "crypto-js";
 import {ipfs} from "../../services/uploadIPFS";
 
 interface PatentFormProps {
-    collection: string;
+    collectionName: string;
+    patentAddedCallback?: (collectionName: string) => any;
 }
 
-function PatentForm({collection}: PatentFormProps) {
+function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     const [collectionNFT, setCollectionNFT] = useState<any>(null);
     const [patentIdPristine, setPatentIdPristine] = useState(true);
     const [researcherPristine, setResearcherPristine] = useState(true);
@@ -29,10 +30,10 @@ function PatentForm({collection}: PatentFormProps) {
 
     useEffect(() => {
         setCollectionElements();
-    }, [collection]);
+    }, [collectionName]);
 
     const setCollectionElements = async () => {
-        const collectionNFT = await getCollectionNFT(collection);
+        const collectionNFT = await getCollectionNFT(collectionName);
         setCollectionNFT(collectionNFT);
     }
 
@@ -97,6 +98,7 @@ function PatentForm({collection}: PatentFormProps) {
         // Fetch the tokenURI for verification
         const fetchedTokenUri = await collectionNFT.getTokenURI(tokenId);
         console.log(fetchedTokenUri);
+        if (patentAddedCallback) patentAddedCallback(collectionName);
     }
 
     const decryptDocument = async (encryptedText: string) => {
@@ -109,7 +111,7 @@ function PatentForm({collection}: PatentFormProps) {
     return (
         <Box marginX={'30px'}>
             <Grid container>
-                <h2>Add patent to {collection} Collection</h2>
+                <h2>Add patent to {collectionName} Collection</h2>
             </Grid>
             <Grid container>
                 <TextField label="Lead Researcher" value={researcher}

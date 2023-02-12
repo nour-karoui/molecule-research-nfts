@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import Header from "./components/Header";
 import {createTheme, ThemeProvider} from '@mui/material/styles'
@@ -21,6 +21,13 @@ const theme = createTheme({
 });
 
 function App() {
+    const [selectedCollection, setSelectedCollection] = useState<string | undefined>();
+    const [collectionToUpdate, setCollectionToUpdate] = useState<string | undefined>();
+
+    const addPatentCallback = (collectionName: string) => {
+        setCollectionToUpdate(collectionName);
+    }
+
     return (
         <ThemeProvider theme={theme}>
             {
@@ -28,12 +35,15 @@ function App() {
                     <div>
                         <Header/>
                         <Grid container>
-                            <Grid xs={6}>
-                                <CollectionsList/>
+                            <Grid item xs={6}>
+                                <CollectionsList selectCollection={setSelectedCollection}
+                                                 collectionToUpdate={collectionToUpdate}
+                                                 setCollectionToUpdate={setCollectionToUpdate}/>
                             </Grid>
-                            <Grid xs={6} marginTop={'60px'}>
-                                <PatentForm collection={'test'}/>
-                            </Grid>
+                            {selectedCollection &&
+                                <Grid item xs={6} marginTop={'60px'}>
+                                    <PatentForm patentAddedCallback={addPatentCallback} collectionName={selectedCollection}/>
+                                </Grid>}
                         </Grid>
                     </div>
                     :

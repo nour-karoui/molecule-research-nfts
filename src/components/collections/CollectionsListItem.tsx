@@ -7,9 +7,18 @@ import {createRef, useEffect, useState} from "react";
 interface CollectionsListItemProps {
     collection: Collection;
     isOwner: boolean;
+    selectCollection: () => void;
+    collectionToUpdate: string | undefined;
+    setCollectionToUpdate: (value: string | undefined) => void;
 }
 
-function CollectionsListItem({ collection, isOwner }: CollectionsListItemProps) {
+function CollectionsListItem({
+                                 collection,
+                                 isOwner,
+                                 selectCollection,
+                                 collectionToUpdate,
+                                 setCollectionToUpdate
+                             }: CollectionsListItemProps) {
     const [collectionNFT, setCollectionNFT] = useState<any>(null);
     const [availableMinters, setAvailableMinters] = useState(0);
 
@@ -20,29 +29,31 @@ function CollectionsListItem({ collection, isOwner }: CollectionsListItemProps) 
         }
     }
 
-    const setNumberOfMinters = async () => {
-        const number = await collectionNFT.approvedMintersCount();
-        setAvailableMinters(number.toNumber());
+    const updateNumberOfAvailableMinters = async () => {
+        const numberOfMinters = await collectionNFT.approvedMintersCount();
+        setAvailableMinters(numberOfMinters.toNumber());
     }
 
     useEffect(() => {
         setSmartContract();
-        setNumberOfMinters();
-    }, [collection, setSmartContract, setNumberOfMinters])
+        updateNumberOfAvailableMinters();
+    }, [collection, setSmartContract, updateNumberOfAvailableMinters])
 
+    useEffect(() => {
+        if (collectionToUpdate && collectionToUpdate === collection.name)
+            setCollectionToUpdate(undefined);
+    }, [collectionToUpdate])
 
     let textInput: any = createRef();
     const onAddAddress = async () => {
         const tx = await collectionNFT.addMinter(textInput.current.value);
         tx.wait(1);
-        const numberOfMinters = await collectionNFT.approvedMintersCount();
-        setAvailableMinters(numberOfMinters.toNumber());
+        await updateNumberOfAvailableMinters();
     }
     const onRevokeAddress = async () => {
         const tx = await collectionNFT.revokeMinter(textInput.current.value);
         tx.wait(1);
-        const numberOfMinters = await collectionNFT.approvedMintersCount();
-        setAvailableMinters(numberOfMinters.toNumber());
+        await updateNumberOfAvailableMinters();
     }
     return (
         <Card variant="outlined">
@@ -50,8 +61,8 @@ function CollectionsListItem({ collection, isOwner }: CollectionsListItemProps) 
                 <Grid container spacing={'10px'} alignItems="center">
                     <Grid item xs={2}>
                         {isOwner && <Chip label="owner" color="success" size='small'
-                                                icon={<FiberManualRecordIcon style={{transform: 'scale(0.5)'}}/>}
-                                                variant="outlined"/>}
+                                          icon={<FiberManualRecordIcon style={{transform: 'scale(0.5)'}}/>}
+                                          variant="outlined"/>}
                     </Grid>
                     <Grid item sx={{flexGrow: 1}}>
                         <span> {collection.name} </span>
@@ -59,11 +70,11 @@ function CollectionsListItem({ collection, isOwner }: CollectionsListItemProps) 
                     <Grid item xs={2}>
                         <div style={{fontWeight: 'bold', marginRight: '40px'}}>({collection.symbol})</div>
                     </Grid>
-                    <Grid item xs={2}>
-                        <div style={{fontWeight: 'bold', marginRight: '40px'}}>({availableMinters})</div>
+                    <Grid item xs={3}>
+                        <div style={{fontWeight: 'bold', marginRight: '40px'}}>({availableMinters} Minters)</div>
                     </Grid>
                     <Grid item>
-                        <Button color={'secondary'} variant={'outlined'}>Add patent</Button>
+                        <Button color={'secondary'} variant={'outlined'} onClick={selectCollection}>Add patent</Button>
                     </Grid>
                 </Grid>
                 {
