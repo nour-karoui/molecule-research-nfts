@@ -24,7 +24,9 @@ function CollectionsListItem({
 
     const [collectionNFT, setCollectionNFT] = useState<any>(null);
     const [availableMinters, setAvailableMinters] = useState(0);
-    const [addressInput, setAddressInput] = useState("")
+    const [addressInput, setAddressInput] = useState("");
+    const [successOpen, setSuccessOpen] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
     const [errorOpen, setErrorOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -74,23 +76,32 @@ function CollectionsListItem({
             const tx = await collectionNFT.addMinter(addressInput.trim());
             await tx.wait();
             await updateNumberOfAvailableMinters();
+            console.info(`${addressInput.trim()} added successfully`);
+            setSuccessMessage(`${addressInput.trim()} added successfully`);
+            setSuccessOpen(true);
         } catch (e: any) {
             setErrorMessage(e.reason);
             setErrorOpen(true);
         }
 
     }
+
     const onRevokeAddress = async () => {
         try {
             const tx = await collectionNFT.revokeMinter(addressInput.trim());
             await tx.wait();
             await updateNumberOfAvailableMinters();
+            console.info(`${addressInput.trim()} revoked successfully`);
+            setSuccessMessage(`${addressInput.trim()} revoked successfully`);
+            setSuccessOpen(true);
+
         } catch (e: any) {
             setErrorMessage(e.reason);
             setErrorOpen(true);
         }
 
     }
+
     return (
         <Card variant="outlined">
             <CardContent>
