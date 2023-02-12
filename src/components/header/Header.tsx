@@ -5,12 +5,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import {Box, Button} from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import {ethers} from "ethers";
 import {getAccountAddress, getAccountBalance, provider} from "../../services/initweb3";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from '@mui/icons-material/Close';
-
-
 
 function Header() {
     const [defaultAccount, setDefaultAccount] = useState<string | null | undefined>(null);
@@ -37,7 +34,6 @@ function Header() {
             setUserBalance(balance);
         }
     };
-
 
     const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -81,7 +77,7 @@ function Header() {
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         Molecule
                     </Typography>
-                    {localStorage['isConnected'] && JSON.parse(localStorage['isConnected']) ?
+                    {defaultAccount ?
                         <Box>
                             <AccountCircleIcon style={{fontWeight: 'bold', marginRight: '10px'}}></AccountCircleIcon>
                             <span>{defaultAccount?.slice(0, 17)}...</span>

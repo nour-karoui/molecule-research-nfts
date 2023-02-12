@@ -2,7 +2,8 @@ import {Button, Card, CardContent, Chip, Grid, TextField} from "@mui/material";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {Collection} from "../../services/fetchCollections";
 import {getCollectionNFT} from "../../services/initweb3";
-import {createRef, useEffect, useState} from "react";
+import {createRef, SyntheticEvent, useEffect, useState} from "react";
+import {Error} from "../../services/responses";
 
 interface CollectionsListItemProps {
     collection: Collection;
@@ -23,6 +24,8 @@ function CollectionsListItem({
     const [collectionNFT, setCollectionNFT] = useState<any>(null);
     const [availableMinters, setAvailableMinters] = useState(0);
     const [addressInput, setAddressInput] = useState("")
+    const [errorOpen, setErrorOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         setSmartContract();
@@ -38,29 +41,59 @@ function CollectionsListItem({
     }, [collectionToUpdate])
 
     const setSmartContract = async () => {
-        setCollectionNFT(await getCollectionNFT(collection.name));
+        try {
+            setCollectionNFT(await getCollectionNFT(collection.name));
+        }catch (e) {
+            setErrorMessage('Error with linking smart contract');
+            setErrorOpen(true);
+        }
     }
+
+    const handleErrorClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setErrorOpen(false);
+    };
 
     const updateNumberOfAvailableMinters = async () => {
         if(collectionNFT) {
-            const numberOfMinters = await collectionNFT.approvedMintersCount();
-            setAvailableMinters(numberOfMinters.toNumber());
+            try {
+                const numberOfMinters = await collectionNFT.approvedMintersCount();
+                setAvailableMinters(numberOfMinters.toNumber());
+            }catch (e) {
+                setErrorMessage('Error with setting approved minters');
+                setErrorOpen(true);
+            }
         }
     }
 
     const onAddAddress = async () => {
-        const tx = await collectionNFT.addMinter(addressInput.trim());
-        await tx.wait();
-        await updateNumberOfAvailableMinters();
+        try{
+            const tx = await collectionNFT.addMinter(addressInput.trim());
+            await tx.wait();
+            await updateNumberOfAvailableMinters();
+        } catch (e: any) {
+            setErrorMessage(e.reason);
+            setErrorOpen(true);
+        }
+
     }
     const onRevokeAddress = async () => {
-        const tx = await collectionNFT.revokeMinter(addressInput.trim());
-        await tx.wait();
-        await updateNumberOfAvailableMinters();
+        try {
+            const tx = await collectionNFT.revokeMinter(addressInput.trim());
+            await tx.wait();
+            await updateNumberOfAvailableMinters();
+        } catch (e: any) {
+            setErrorMessage(e.reason);
+            setErrorOpen(true);
+        }
+
     }
     return (
         <Card variant="outlined">
             <CardContent>
+                <Error open={errorOpen} handleClose={handleErrorClose} message={errorMessage}></Error>
                 <Grid container spacing={'10px'} alignItems="center">
                     <Grid item xs={2}>
                         {isOwner && <Chip label="owner" color="success" size='small'

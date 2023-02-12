@@ -1,8 +1,9 @@
 import {Box, Button, Grid, TextField} from "@mui/material";
-import {useEffect, useState} from "react";
+import {SyntheticEvent, useEffect, useState} from "react";
 import {getCollectionNFT} from "../../services/initweb3";
 import * as crypto from "crypto-js";
 import {ipfs} from "../../services/uploadIPFS";
+import {Error, Success} from "../../services/responses";
 
 interface PatentFormProps {
     collectionName: string;
@@ -31,6 +32,13 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     const [institution, setInstitution] = useState("");
     const [institutionValid, setInstitutionValid] = useState(true);
     const [institutionPristine, setInstitutionPristine] = useState(true);
+
+    const [successOpen, setSuccessOpen] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorOpen, setErrorOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const [openSeaUrl, setOpenSeaUrl] = useState('');
 
     useEffect(() => {
         setCollectionElements();
@@ -71,42 +79,91 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
         setInstitutionValid(value.trim() !== "");
         setInstitution(value);
     }
-    const submitPatent = async () => {
-        // Mint new NFT
+
+    const mintNFT = async () => {
         const tx = await collectionNFT.mintPatent();
         let receipt = await tx.wait();
-        const tokenId = (receipt.events[0].args['tokenId']).toNumber();
-        // Create a new encryption key for the contract data
+        return (receipt.events[0].args['tokenId']).toNumber();
+    };
+
+    const createEncryptionKey = () => {
         const encryptionKey = crypto.lib.WordArray.random(16).toString(); // 128-bits === 16-bytes
         localStorage.setItem('key', encryptionKey);
-        // encrypt form data
-        const contractData = {
-            researcher: researcher.trim(),
-            university: university.trim(),
-            patent_filed: {
-                patent_id: patentId.trim(),
-                institution: institution.trim(),
-            }
-        }
-        const ciphertext = crypto.AES.encrypt(JSON.stringify(contractData), localStorage.getItem('key')!).toString();
-        const contractDataResult = await ipfs.add(ciphertext);
-        const nftMetadata = {
-            name: `token ${tokenId}`,
-            subject: `this token can cure ${subject.trim()}`,
-            contractData: `https://skywalker.infura-ipfs.io/ipfs/${contractDataResult.path}`
-        }
-        const metadataResult = await ipfs.add(JSON.stringify(nftMetadata));
-        const tokenURI = `https://skywalker.infura-ipfs.io/ipfs/${metadataResult.path}`;
-        // Add TokenURI to token
-        const tokenUriTx = await collectionNFT.setTokenURI(tokenId, tokenURI);
-        const tokenUriReceipt = await tokenUriTx.wait();
-        console.log('done');
-        console.log(tokenUriReceipt);
-        // Fetch the tokenURI for verification
-        const fetchedTokenUri = await collectionNFT.getTokenURI(tokenId);
-        console.log(fetchedTokenUri);
-        if (patentAddedCallback) patentAddedCallback(collectionName);
     }
+
+    const encryptData = (data: any) => {
+        return crypto.AES.encrypt(JSON.stringify(data), localStorage.getItem('key')!).toString();
+    }
+
+    const uploadToIpfs = async (data: string) => {
+        return await ipfs.add(data)
+    }
+
+    const addTokenUriToNFT = async (tokenId: string, tokenURI: string) => {
+        const tokenUriTx = await collectionNFT.setTokenURI(tokenId, tokenURI);
+        await tokenUriTx.wait();
+        console.info(`Token URI added to NFT ${tokenId}`);
+    }
+
+    const fetchTokenUri = async (tokenId: string) => {
+        return await collectionNFT.getTokenURI(tokenId);
+    }
+
+    const submitPatent = async () => {
+        try {
+            const tokenId = await mintNFT();
+            console.info('NFT created with tokenId: ' + tokenId);
+            createEncryptionKey();
+            console.info('Symmetric encryption key created');
+            // encrypt form data
+            const contractData = {
+                researcher: researcher.trim(),
+                university: university.trim(),
+                patent_filed: {
+                    patent_id: patentId.trim(),
+                    institution: institution.trim(),
+                }
+            }
+            const ciphertext = encryptData(contractData);
+            const contractDataResult = await uploadToIpfs(ciphertext);
+            console.info('Contract Data encrypted and uploaded to IPFS');
+            // prepare NFT metadata
+            const nftMetadata = {
+                name: `token ${tokenId}`,
+                subject: `this token can cure ${subject.trim()}`,
+                contractData: `https://skywalker.infura-ipfs.io/ipfs/${contractDataResult.path}`
+            }
+            const metadataResult = await uploadToIpfs(JSON.stringify(nftMetadata));
+            console.info('NFT metadata uploaded to IPFS');
+            const tokenURI = `https://skywalker.infura-ipfs.io/ipfs/${metadataResult.path}`;
+
+            await addTokenUriToNFT(tokenId, tokenURI);
+            const result = await fetchTokenUri(tokenId);
+            console.info(`token URI ${result} added to NFT with id ${tokenId}`);
+            setOpenSeaUrl(`https://testnets.opensea.io/assets/goerli/${collectionNFT.address}/${tokenId}`);
+            setSuccessMessage(`form submitted successfully, check your NFT at ${openSeaUrl}`);
+            if (patentAddedCallback) patentAddedCallback(collectionName);
+            setSuccessOpen(true);
+        }
+        catch (e: any) {
+            setErrorMessage(e.reason);
+            setErrorOpen(true);
+        }
+    }
+
+    const handleSuccessClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSuccessOpen(false);
+    };
+
+    const handleErrorClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setErrorOpen(false);
+    };
 
     const decryptDocument = async (encryptedText: string) => {
         const bytes = crypto.AES.decrypt(encryptedText, localStorage.getItem('key')!);
@@ -114,9 +171,10 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
         console.log(decryptedData);
     }
 
-
     return (
         <Box marginX={'30px'}>
+            <Success open={successOpen} handleClose={handleSuccessClose} message={successMessage}></Success>
+            <Error open={errorOpen} handleClose={handleErrorClose} message={errorMessage}></Error>
             <Grid container>
                 <h2>Add patent to {collectionName} Collection</h2>
             </Grid>
