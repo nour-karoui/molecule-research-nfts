@@ -91,8 +91,8 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
         const ciphertext = crypto.AES.encrypt(JSON.stringify(contractData), localStorage.getItem('key')!).toString();
         const contractDataResult = await ipfs.add(ciphertext);
         const nftMetadata = {
-            name: tokenId,
-            subject: 'some subject',
+            name: `token ${tokenId}`,
+            subject: `this token can cure ${subject.trim()}`,
             contractData: `https://skywalker.infura-ipfs.io/ipfs/${contractDataResult.path}`
         }
         const metadataResult = await ipfs.add(JSON.stringify(nftMetadata));

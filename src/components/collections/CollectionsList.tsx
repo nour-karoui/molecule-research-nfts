@@ -17,18 +17,19 @@ interface CollectionListProps {
 function CollectionsList({selectCollection, collectionToUpdate, setCollectionToUpdate}: CollectionListProps) {
     const [currentAccount, setCurrentAccount] = useState<any>();
     const [collections, setCollections] = useState<Collection[]>([]);
-    const [collectionsFetched, setCollectionsFetched] = useState<Boolean>(false);
     const [collectionsData, setCollectionsData] = useState<Collection[]>([]);
     const [addingNewCollection, setAddingNewCollection] = useState(false);
 
     useEffect(() => {
         fetchAvailableCollections();
         setAccount();
-    }, [collections])
+    }, [])
 
     const onAddCollection = () => setAddingNewCollection(true);
     const onCloseAddCollection = () => setAddingNewCollection(false);
-
+    const refreshCollections = async () => {
+        await fetchAvailableCollections();
+    }
     const setAccount = async () => {
         const address = await getAccountAddress();
         if (address) {
@@ -36,14 +37,10 @@ function CollectionsList({selectCollection, collectionToUpdate, setCollectionToU
         }
     }
     const fetchAvailableCollections = async () => {
-        if (!collectionsFetched) {
-            const collections = await fetchCollections();
-            setCollections(collections);
-            setCollectionsData(collections)
-            setCollectionsFetched(true);
-        }
+        const collections = await fetchCollections();
+        setCollections(collections);
+        setCollectionsData(collections)
     }
-
     const filterCollections = (clause: string) => clause === "" ?
         setCollectionsData(collections) :
         setCollectionsData(
@@ -72,7 +69,7 @@ function CollectionsList({selectCollection, collectionToUpdate, setCollectionToU
             </div>
             {addingNewCollection &&
                 <div style={{marginBlock: '10px'}}>
-                    <NewCollectionItem/>
+                    <NewCollectionItem collectionAddedCallback={refreshCollections} />
                 </div>}
             {
                 collectionsData && collectionsData.map((collection: Collection) =>

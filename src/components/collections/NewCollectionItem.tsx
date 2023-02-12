@@ -1,12 +1,12 @@
-import {Button, Card, CardContent, Chip, Grid, TextField} from "@mui/material";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import {Button, Card, CardContent, Grid, TextField} from "@mui/material";
 import {useState} from "react";
+import {collectionsFactory} from "../../services/initweb3";
 
 interface NewCollectionItemProps {
-
+    collectionAddedCallback?: () => any;
 }
 
-function NewCollectionItem({}) {
+function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
 
     const [newName, setNewName] = useState('');
     const [newSymbol, setNewSymbol] = useState('');
@@ -17,10 +17,11 @@ function NewCollectionItem({}) {
     const [newNameIsPristine, setNewNameIsPristine] = useState(true);
     const [newSymbolIsPristine, setNewSymbolIsPristine] = useState(true);
 
-    const onAddCollection = () => {
-        // Note to self: use trimed values
-        console.log(newName.trim());
-        console.log(newSymbol.trim());
+    const onAddCollection = async () => {
+        const tx = await collectionsFactory.createNewCollection(newName.trim(), newSymbol.trim());
+        const result = await tx.wait();
+        console.log(result);
+        if (collectionAddedCallback) collectionAddedCallback();
     }
 
     const onNewNameChange = (value: string) => {

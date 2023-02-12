@@ -38,7 +38,8 @@ function App() {
                             <Grid item xs={6}>
                                 <CollectionsList selectCollection={setSelectedCollection}
                                                  collectionToUpdate={collectionToUpdate}
-                                                 setCollectionToUpdate={setCollectionToUpdate}/>
+                                                 setCollectionToUpdate={setCollectionToUpdate}
+                                />
                             </Grid>
                             {selectedCollection &&
                                 <Grid item xs={6} marginTop={'60px'}>
