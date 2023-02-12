@@ -44,6 +44,7 @@ contract MoleculeNFT is ERC721URIStorage, Ownable {
     totalMintedPatentsCount += 1;
     mintedPatents[msg.sender] += 1;
     approvedMinters[msg.sender] = false;
+    approvedMintersCount -= 1;
     _tokenIds.increment();
     return (tokenId, totalMintedPatentsCount);
   }
@@ -55,5 +56,10 @@ contract MoleculeNFT is ERC721URIStorage, Ownable {
   function setTokenURI(uint256 tokenId, string memory _tokenURI) public payable {
     require(ownerOf(tokenId) == msg.sender, "Sorry but you are not the owner of this NFT");
     _setTokenURI(tokenId, _tokenURI);
+  }
+
+  function getTokenURI(uint256 tokenId) view public returns(string memory) {
+    require(ownerOf(tokenId) == msg.sender, "Sorry but you are not the owner of this NFT");
+    return(tokenURI(tokenId));
   }
 }

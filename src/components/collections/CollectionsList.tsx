@@ -13,7 +13,6 @@ function CollectionsList() {
     useEffect(() => {
         fetchAvailableCollections();
         setAccount(provider?.getSigner());
-
     }, [collections])
 
     const setAccount = async (newAccount: any) => {

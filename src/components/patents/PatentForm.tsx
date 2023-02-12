@@ -1,6 +1,8 @@
 import {Box, Button, Grid, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
-import {collectionsFactory, getCollectionNFT} from "../../services/initweb3";
+import {getCollectionNFT} from "../../services/initweb3";
+import * as crypto from "crypto-js";
+import {ipfs} from "../../services/uploadIPFS";
 
 interface PatentFormProps {
     collection: string;
@@ -8,7 +10,6 @@ interface PatentFormProps {
 
 function PatentForm({collection}: PatentFormProps) {
     const [collectionNFT, setCollectionNFT] = useState<any>(null);
-    const [collectionNFTAddress, setCollectionNFTAddress] = useState(null);
     const [patentIdPristine, setPatentIdPristine] = useState(true);
     const [researcherPristine, setResearcherPristine] = useState(true);
     const [universityPristine, setUniversityPristine] = useState(true);
@@ -63,14 +64,45 @@ function PatentForm({collection}: PatentFormProps) {
         // Mint new NFT
         const tx = await collectionNFT.mintPatent();
         let receipt = await tx.wait();
-        console.log(receipt);
-        console.log(tx);
-        // Create an encryption key
-        // encrypt Form Data
-        // save form data on IPFS
-        // Create NFT metadata
-        // Save metadata on IPFS
+        const tokenId = (receipt.events[0].args['tokenId']).toNumber();
+        // check if there is an encryption key, else create a new one
+        if (!localStorage.getItem('key')) {
+            console.log('git here');
+            const encryptionKey = crypto.lib.WordArray.random(16).toString(); // 128-bits === 16-bytes
+            localStorage.setItem('key', encryptionKey);
+        }
+        // encrypt form data
+        const contractData = {
+            researcher: researcher.trim(),
+            university: university.trim(),
+            patent_filed: {
+                patent_id: patentId.trim(),
+                institution: institution.trim(),
+            }
+        }
+        const ciphertext = crypto.AES.encrypt(JSON.stringify(contractData), localStorage.getItem('key')!).toString();
+        const contractDataResult = await ipfs.add(ciphertext);
+        const nftMetadata = {
+            name: 'sometoken',
+            subject: 'some subject',
+            contractData: `https://skywalker.infura-ipfs.io/ipfs/${contractDataResult.path}`
+        }
+        const metadataResult = await ipfs.add(JSON.stringify(nftMetadata));
+        const tokenURI = `https://skywalker.infura-ipfs.io/ipfs/${metadataResult.path}`;
         // Add TokenURI to token
+        const tokenUriTx = await collectionNFT.setTokenURI(tokenId, tokenURI);
+        const tokenUriReceipt = await tokenUriTx.wait();
+        console.log('done');
+        console.log(tokenUriReceipt);
+        // Fetch the tokenURI for verification
+        const fetchedTokenUri = await collectionNFT.getTokenURI(tokenId);
+        console.log(fetchedTokenUri);
+    }
+
+    const decryptDocument = async (encryptedText: string) => {
+        const bytes  = crypto.AES.decrypt(encryptedText,  localStorage.getItem('key')!);
+        const decryptedData = JSON.parse(bytes.toString(crypto.enc.Utf8));
+        console.log(decryptedData);
     }
 
 
