@@ -1,4 +1,4 @@
-export const collectionsFactoryABI =  [
+export const collectionsFactoryABI = [
     {
         "inputs": [],
         "stateMutability": "nonpayable",
@@ -146,4 +146,4 @@ export const collectionsFactoryABI =  [
     }
 ];
 
-export const collectionsFactoryAddress = '0xF547Be6391efAC0eeA5aA69cEcdf04D484992e61';
+export const collectionsFactoryAddress = '0xCBB110e40D59eD93bDf7A8347D27aa85C3bb1b7c';

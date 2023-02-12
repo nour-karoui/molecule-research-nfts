@@ -30,6 +30,7 @@ function CollectionsListItem({
     }
 
     const updateNumberOfAvailableMinters = async () => {
+        console.log('i am updating number of minters');
         const numberOfMinters = await collectionNFT.approvedMintersCount();
         setAvailableMinters(numberOfMinters.toNumber());
     }

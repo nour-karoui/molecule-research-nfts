@@ -66,12 +66,9 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
         const tx = await collectionNFT.mintPatent();
         let receipt = await tx.wait();
         const tokenId = (receipt.events[0].args['tokenId']).toNumber();
-        // check if there is an encryption key, else create a new one
-        if (!localStorage.getItem('key')) {
-            console.log('git here');
-            const encryptionKey = crypto.lib.WordArray.random(16).toString(); // 128-bits === 16-bytes
-            localStorage.setItem('key', encryptionKey);
-        }
+        // Create a new encryption key for the contract data
+        const encryptionKey = crypto.lib.WordArray.random(16).toString(); // 128-bits === 16-bytes
+        localStorage.setItem('key', encryptionKey);
         // encrypt form data
         const contractData = {
             researcher: researcher.trim(),
@@ -84,7 +81,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
         const ciphertext = crypto.AES.encrypt(JSON.stringify(contractData), localStorage.getItem('key')!).toString();
         const contractDataResult = await ipfs.add(ciphertext);
         const nftMetadata = {
-            name: 'sometoken',
+            name: tokenId,
             subject: 'some subject',
             contractData: `https://skywalker.infura-ipfs.io/ipfs/${contractDataResult.path}`
         }
