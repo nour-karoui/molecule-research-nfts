@@ -1,4 +1,4 @@
-import {Fragment, useEffect, useState} from 'react';
+import {Fragment, SyntheticEvent, useEffect, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Snackbar from '@mui/material/Snackbar';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,39 +6,49 @@ import Typography from '@mui/material/Typography';
 import {Box, Button} from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {ethers} from "ethers";
-import {provider} from "../services/initweb3";
+import {getAccountAddress, getAccountBalance, provider} from "../../services/initweb3";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from '@mui/icons-material/Close';
 
 
 
 function Header() {
-    const [defaultAccount, setDefaultAccount] = useState<string | null>(null);
-    const [userBalance, setUserBalance] = useState<string | null>(null);
+    const [defaultAccount, setDefaultAccount] = useState<string | null | undefined>(null);
+    const [userBalance, setUserBalance] = useState<number | null | undefined>(0);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        if(localStorage['isConnected'] && JSON.parse(localStorage['isConnected'])) {
-            connectWalletHandler();
-        }
+        setAccount();
+        setBalance();
     });
 
-    const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    const setAccount = async () => {
+        const address = await getAccountAddress();
+        if(address) {
+            setDefaultAccount(address);
+        } else {
+            setOpen(true);
+        }
+    };
+
+    const setBalance = async () => {
+        const balance = await getAccountBalance();
+        if(balance) {
+            setUserBalance(balance);
+        }
+    };
+
+
+    const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
         }
         setOpen(false);
     };
 
-    const connectWalletHandler = () => {
-        console.log('connectWithMetamask')
-        if (window.ethereum) {
-            provider?.send("eth_requestAccounts", []).then(async () => {
-                await accountChangedHandler(provider?.getSigner());
-            })
-        } else {
-            setOpen(true);
-        }
+    const connectWalletHandler = async () => {
+        console.log('connectWithMetamask');
+        await setAccount();
     }
 
     const action = (
@@ -57,14 +67,6 @@ function Header() {
         </Fragment>
     );
 
-
-    const accountChangedHandler = async (newAccount: any) => {
-        const address = await newAccount.getAddress();
-        setDefaultAccount(address);
-        localStorage.setItem('isConnected', true.toString());
-        const balance = await newAccount.getBalance();
-        setUserBalance(ethers.utils.formatEther(balance));
-    }
     return (
         <Box sx={{flexGrow: 1}}>
             <Snackbar

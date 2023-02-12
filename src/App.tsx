@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Header from "./components/Header";
+import Header from "./components/header/Header";
 import {createTheme, ThemeProvider} from '@mui/material/styles'
 import CollectionsList from "./components/collections/CollectionsList";
 import PatentForm from "./components/patents/PatentForm";

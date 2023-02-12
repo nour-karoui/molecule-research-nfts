@@ -1,9 +1,9 @@
 import CollectionsListItem from "./CollectionsListItem";
 import {useEffect, useState} from "react";
 import {Box, Button, Grid} from "@mui/material";
-import SearchBar from "../SearchBar";
+import SearchBar from "../search-bar/SearchBar";
 import {Collection, fetchCollections} from "../../services/fetchCollections";
-import {provider} from "../../services/initweb3";
+import {getAccountAddress, provider} from "../../services/initweb3";
 import NewCollectionItem from "./NewCollectionItem";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from '@mui/icons-material/Close';
@@ -18,15 +18,17 @@ function CollectionsList() {
 
     useEffect(() => {
         fetchAvailableCollections();
-        setAccount(provider?.getSigner());
+        setAccount();
     }, [collections])
 
     const onAddCollection = () => setAddingNewCollection(true);
     const onCloseAddCollection = () => setAddingNewCollection(false);
 
-    const setAccount = async (newAccount: any) => {
-        const address = await newAccount.getAddress();
-        setCurrentAccount(address);
+    const setAccount = async () => {
+        const address = await getAccountAddress();
+        if (address) {
+            setCurrentAccount(address);
+        }
     }
     const fetchAvailableCollections = async () => {
         if (!collectionsFetched) {
