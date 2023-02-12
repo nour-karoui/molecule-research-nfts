@@ -8,8 +8,13 @@ import NewCollectionItem from "./NewCollectionItem";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from '@mui/icons-material/Close';
 
+interface CollectionListProps {
+    selectCollection: (collection: string) => void;
+    collectionToUpdate: string | undefined;
+    setCollectionToUpdate: (value: string | undefined) => void;
+}
 
-function CollectionsList() {
+function CollectionsList({selectCollection, collectionToUpdate, setCollectionToUpdate}: CollectionListProps) {
     const [currentAccount, setCurrentAccount] = useState<any>();
     const [collections, setCollections] = useState<Collection[]>([]);
     const [collectionsFetched, setCollectionsFetched] = useState<Boolean>(false);
@@ -72,8 +77,11 @@ function CollectionsList() {
             {
                 collectionsData && collectionsData.map((collection: Collection) =>
                     <CollectionsListItem collection={collection}
+                                         selectCollection={() => selectCollection(collection.name)}
                                          key={collection.symbol}
-                                         isOwner={collection.owner === currentAccount}/>)
+                                         isOwner={collection.owner === currentAccount}
+                                         collectionToUpdate={collectionToUpdate}
+                                         setCollectionToUpdate={setCollectionToUpdate}/>)
             }
         </Box>
     );
