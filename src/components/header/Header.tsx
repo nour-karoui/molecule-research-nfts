@@ -3,15 +3,16 @@ import AppBar from '@mui/material/AppBar';
 import Snackbar from '@mui/material/Snackbar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {Box, Button} from "@mui/material";
+import {Box, Button, Grid} from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {getAccountAddress, getAccountBalance, provider} from "../../services/initweb3";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 function Header() {
     const [defaultAccount, setDefaultAccount] = useState<string | null | undefined>(null);
-    const [userBalance, setUserBalance] = useState<string | null | undefined>();
+    const [userBalance, setUserBalance] = useState<number | null | undefined>();
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -21,7 +22,7 @@ function Header() {
 
     const setAccount = async () => {
         const address = await getAccountAddress();
-        if(address) {
+        if (address) {
             setDefaultAccount(address);
         } else {
             setOpen(true);
@@ -30,8 +31,8 @@ function Header() {
 
     const setBalance = async () => {
         const balance = await getAccountBalance();
-        if(balance) {
-            setUserBalance(balance);
+        if (balance) {
+            setUserBalance(Math.round(parseFloat(balance) * 10000) / 10000);
         }
     };
 
@@ -47,6 +48,10 @@ function Header() {
         await setAccount();
     }
 
+    const copyAddress = async () => {
+        await navigator.clipboard.writeText(defaultAccount ?? "");
+    }
+
     const action = (
         <Fragment>
             <Button color="secondary" size="small" onClick={handleClose}>
@@ -58,7 +63,7 @@ function Header() {
                 color="inherit"
                 onClick={handleClose}
             >
-                <CloseIcon fontSize="small" />
+                <CloseIcon fontSize="small"/>
             </IconButton>
         </Fragment>
     );
@@ -79,8 +84,31 @@ function Header() {
                     </Typography>
                     {defaultAccount ?
                         <Box>
-                            <AccountCircleIcon style={{fontWeight: 'bold', marginRight: '10px'}}></AccountCircleIcon>
-                            <span>{defaultAccount?.slice(0, 17)}...</span>
+                            <Grid container alignItems="center">
+                                <Grid item>
+                                    <Grid container alignItems="center">
+                                        <Grid item>
+                                            <span style={{marginRight: "10px"}}>
+                                                {defaultAccount?.slice(0, 5) + "..." + defaultAccount?.slice(-5)}
+                                            </span>
+                                        </Grid>
+                                        <Grid item>
+                                            <IconButton color="info" onClick={copyAddress}>
+                                                <ContentCopyIcon fontSize="small"/>
+                                            </IconButton>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container justifyContent="start">
+                                        <span style={{fontWeight: 'bold'}}>
+                                            {userBalance} ETH
+                                        </span>
+                                    </Grid>
+                                </Grid>
+                                <Grid item>
+                                    <AccountCircleIcon fontSize="large"
+                                                       style={{marginRight: '10px'}}></AccountCircleIcon>
+                                </Grid>
+                            </Grid>
                         </Box>
                         :
                         <Button onClick={() => connectWalletHandler()} variant="outlined" color="info">

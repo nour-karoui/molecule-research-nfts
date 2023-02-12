@@ -66,7 +66,7 @@ function CollectionsList({selectCollection, collectionToUpdate, setCollectionToU
                     .includes(clause.toLowerCase())));
 
     return (
-        <Box paddingTop={'20px'}>
+        <Grid paddingTop={'20px'}>
             <div style={{paddingBottom: '10px'}}>
                 <Error open={errorOpen} handleClose={handleErrorClose} message={errorMessage}></Error>
                 <Grid container>
@@ -98,7 +98,7 @@ function CollectionsList({selectCollection, collectionToUpdate, setCollectionToU
                                          collectionToUpdate={collectionToUpdate}
                                          setCollectionToUpdate={setCollectionToUpdate}/>)
             }
-        </Box>
+        </Grid>
     );
 }
 
