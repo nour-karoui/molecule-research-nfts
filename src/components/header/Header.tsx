@@ -80,7 +80,7 @@ function Header() {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-                        Molecule
+                        Molecule Research NFT
                     </Typography>
                     {defaultAccount ?
                         <Box>
