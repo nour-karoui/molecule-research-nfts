@@ -130,7 +130,7 @@ function PatentForm({collection}: PatentFormProps) {
                     <TextField label="Patent Id" variant='standard'
                                value={patentId}
                                error={!patentIdValid}
-                               helperText={patentIdValid ? '' : 'Must be in the format [A-F]-[1-9]{5,7}\/[A-Z]{5,9}'}
+                               helperText={patentIdValid ? '' : 'Must be in the format [A-F]-[1-9]{5,7}/[A-Z]{5,9}'}
                                onChange={(e) => validatePatentId(e.target.value.trim())}
                                fullWidth/>
                 </Grid>
