@@ -153,5 +153,4 @@ function CollectionsListItem({
         </Card>
     )
 }
-
 export default CollectionsListItem;
