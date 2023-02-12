@@ -5,6 +5,7 @@ import {createTheme, ThemeProvider} from '@mui/material/styles'
 import CollectionsList from "./components/collections/CollectionsList";
 import PatentForm from "./components/patents/PatentForm";
 import {Alert, AlertTitle, Grid} from "@mui/material";
+import Footer from "./components/footer/Footer";
 
 const theme = createTheme({
     palette: {
@@ -23,9 +24,11 @@ const theme = createTheme({
 function App() {
     const [selectedCollection, setSelectedCollection] = useState<string | undefined>();
     const [collectionToUpdate, setCollectionToUpdate] = useState<string | undefined>();
+    const [addedData, setAddedData] = useState<{patentId: string, collection: string} | undefined>();
 
-    const addPatentCallback = (collectionName: string) => {
-        setCollectionToUpdate(collectionName);
+    const addPatentCallback = (collection: string, patentId: string) => {
+        setAddedData({patentId, collection})
+        setCollectionToUpdate(collection);
     }
 
     return (
@@ -34,7 +37,7 @@ function App() {
                 window.ethereum ?
                     <div>
                         <Header/>
-                        <Grid container>
+                        <Grid container paddingBottom="100px">
                             <Grid item xs={6}>
                                 <CollectionsList selectCollection={setSelectedCollection}
                                                  collectionToUpdate={collectionToUpdate}
@@ -43,9 +46,11 @@ function App() {
                             </Grid>
                             {selectedCollection &&
                                 <Grid item xs={6} marginTop={'60px'}>
-                                    <PatentForm patentAddedCallback={addPatentCallback} collectionName={selectedCollection}/>
+                                    <PatentForm patentAddedCallback={addPatentCallback}
+                                                collectionName={selectedCollection}/>
                                 </Grid>}
                         </Grid>
+                        {addedData && <Footer patentId={addedData.patentId} collectionName={addedData.collection}/>}
                     </div>
                     :
                     <div>

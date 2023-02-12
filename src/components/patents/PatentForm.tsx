@@ -6,7 +6,7 @@ import {ipfs} from "../../services/uploadIPFS";
 
 interface PatentFormProps {
     collectionName: string;
-    patentAddedCallback?: (collectionName: string) => any;
+    patentAddedCallback?: (collectionName: string, patentId: string) => any;
 }
 
 function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
@@ -51,7 +51,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     const validateSubject = (value: string) => {
         setSubjectPristine(false);
         setSubjectValid(value.trim() !== "");
-        setSubject(value.trim());
+        setSubject(value);
     }
 
     const validateResearcher = (value: string) => {
@@ -105,7 +105,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
         // Fetch the tokenURI for verification
         const fetchedTokenUri = await collectionNFT.getTokenURI(tokenId);
         console.log(fetchedTokenUri);
-        if (patentAddedCallback) patentAddedCallback(collectionName);
+        if (patentAddedCallback) patentAddedCallback(collectionName.trim(), patentId.trim());
     }
 
     const decryptDocument = async (encryptedText: string) => {
@@ -118,7 +118,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     return (
         <Box marginX={'30px'}>
             <Grid container>
-                <h2>Add patent to {collectionName} Collection</h2>
+                <h2>Add patent to <span style={{textDecoration: 'underline'}}>{collectionName}</span> Collection</h2>
             </Grid>
             <Grid container>
                 <TextField label="Subject" value={subject}
