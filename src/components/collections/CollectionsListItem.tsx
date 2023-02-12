@@ -3,7 +3,7 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {Collection} from "../../services/fetchCollections";
 import {getCollectionNFT} from "../../services/initweb3";
 import {SyntheticEvent, useEffect, useState} from "react";
-import {Error} from "../../services/responses";
+import {Error, Success} from "../../services/responses";
 
 
 interface CollectionsListItemProps {
@@ -59,6 +59,13 @@ function CollectionsListItem({
         setErrorOpen(false);
     };
 
+    const handleSuccessClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSuccessOpen(false);
+    };
+
     const updateNumberOfAvailableMinters = async () => {
         if(collectionNFT) {
             try {
@@ -105,6 +112,7 @@ function CollectionsListItem({
     return (
         <Card variant="outlined">
             <CardContent>
+                <Success open={successOpen} handleClose={handleSuccessClose} message={successMessage}></Success>
                 <Error open={errorOpen} handleClose={handleErrorClose} message={errorMessage}></Error>
                 <Grid container spacing={2} alignItems="center">
                     <Grid item xs={2}>
