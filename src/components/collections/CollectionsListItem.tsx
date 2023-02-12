@@ -19,42 +19,43 @@ function CollectionsListItem({
                                  collectionToUpdate,
                                  setCollectionToUpdate
                              }: CollectionsListItemProps) {
+
     const [collectionNFT, setCollectionNFT] = useState<any>(null);
     const [availableMinters, setAvailableMinters] = useState(0);
     const [addressInput, setAddressInput] = useState("")
 
-    const setSmartContract = async () => {
-        if (!collectionNFT) {
-            const fetchedCollection = await getCollectionNFT(collection.name);
-            setCollectionNFT(fetchedCollection);
-        }
-    }
-
-    const updateNumberOfAvailableMinters = async () => {
-        console.log('i am updating number of minters');
-        const numberOfMinters = await collectionNFT.approvedMintersCount();
-        setAvailableMinters(numberOfMinters.toNumber());
-    }
-
     useEffect(() => {
         setSmartContract();
+    }, [])
+
+    useEffect(() => {
         updateNumberOfAvailableMinters();
-    }, [collection, setSmartContract, updateNumberOfAvailableMinters])
+    }, [collectionNFT])
 
     useEffect(() => {
         if (collectionToUpdate && collectionToUpdate === collection.name)
             setCollectionToUpdate(undefined);
     }, [collectionToUpdate])
 
-    let textInput: any = createRef();
+    const setSmartContract = async () => {
+        setCollectionNFT(await getCollectionNFT(collection.name));
+    }
+
+    const updateNumberOfAvailableMinters = async () => {
+        if(collectionNFT) {
+            const numberOfMinters = await collectionNFT.approvedMintersCount();
+            setAvailableMinters(numberOfMinters.toNumber());
+        }
+    }
+
     const onAddAddress = async () => {
-        const tx = await collectionNFT.addMinter(textInput.current.value);
-        tx.wait(1);
+        const tx = await collectionNFT.addMinter(addressInput.trim());
+        await tx.wait();
         await updateNumberOfAvailableMinters();
     }
     const onRevokeAddress = async () => {
-        const tx = await collectionNFT.revokeMinter(textInput.current.value);
-        tx.wait(1);
+        const tx = await collectionNFT.revokeMinter(addressInput.trim());
+        await tx.wait();
         await updateNumberOfAvailableMinters();
     }
     return (

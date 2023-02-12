@@ -27,7 +27,7 @@ export const getAccountBalance = async () => {
   }
   await provider?.send("eth_requestAccounts", []);
   const balance = await provider?.getSigner().getBalance();
-  return balance?.toNumber();
+  return balance?.toString();
 }
 
 export const collectionsFactory = new ethers.Contract(collectionsFactoryAddress, collectionsFactoryABI, signer);

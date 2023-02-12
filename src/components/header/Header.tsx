@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 function Header() {
     const [defaultAccount, setDefaultAccount] = useState<string | null | undefined>(null);
-    const [userBalance, setUserBalance] = useState<number | null | undefined>(0);
+    const [userBalance, setUserBalance] = useState<string | null | undefined>();
     const [open, setOpen] = useState(false);
 
     useEffect(() => {

@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {Box, Button, Grid} from "@mui/material";
 import SearchBar from "../search-bar/SearchBar";
 import {Collection, fetchCollections} from "../../services/fetchCollections";
-import {getAccountAddress, provider} from "../../services/initweb3";
+import {getAccountAddress} from "../../services/initweb3";
 import NewCollectionItem from "./NewCollectionItem";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from '@mui/icons-material/Close';
@@ -75,7 +75,7 @@ function CollectionsList({selectCollection, collectionToUpdate, setCollectionToU
                 collectionsData && collectionsData.map((collection: Collection) =>
                     <CollectionsListItem collection={collection}
                                          selectCollection={() => selectCollection(collection.name)}
-                                         key={collection.symbol}
+                                         key={collection.name}
                                          isOwner={collection.owner === currentAccount}
                                          collectionToUpdate={collectionToUpdate}
                                          setCollectionToUpdate={setCollectionToUpdate}/>)
