@@ -4,7 +4,10 @@ import {Collection} from "../../services/fetchCollections";
 import {getCollectionNFT} from "../../services/initweb3";
 import {SyntheticEvent, useEffect, useState} from "react";
 import {Error, Success} from "../../services/responses";
+import LoadingButton from '@mui/lab/LoadingButton';
 
+const ADD_MINTER = "Add Minter";
+const REVOKE_MINTER = "Revoke Minter";
 
 interface CollectionsListItemProps {
     collection: Collection;
@@ -30,6 +33,8 @@ function CollectionsListItem({
     const [errorOpen, setErrorOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
+    const [loading, setLoading] = useState<string | undefined>();
+
     useEffect(() => {
         setSmartContract();
     }, [])
@@ -46,7 +51,7 @@ function CollectionsListItem({
     const setSmartContract = async () => {
         try {
             setCollectionNFT(await getCollectionNFT(collection.name));
-        }catch (e) {
+        } catch (e) {
             setErrorMessage('Error with linking smart contract');
             setErrorOpen(true);
         }
@@ -67,11 +72,11 @@ function CollectionsListItem({
     };
 
     const updateNumberOfAvailableMinters = async () => {
-        if(collectionNFT) {
+        if (collectionNFT) {
             try {
                 const numberOfMinters = await collectionNFT.approvedMintersCount();
                 setAvailableMinters(numberOfMinters.toNumber());
-            }catch (e) {
+            } catch (e) {
                 setErrorMessage('Error with setting approved minters');
                 setErrorOpen(true);
             }
@@ -79,21 +84,27 @@ function CollectionsListItem({
     }
 
     const onAddAddress = async () => {
-        try{
+        setLoading(ADD_MINTER);
+        try {
             const tx = await collectionNFT.addMinter(addressInput.trim());
             await tx.wait();
             await updateNumberOfAvailableMinters();
             console.info(`${addressInput.trim()} added successfully`);
             setSuccessMessage(`${addressInput.trim()} added successfully`);
             setSuccessOpen(true);
+            setAddressInput("");
         } catch (e: any) {
             setErrorMessage(e.reason);
             setErrorOpen(true);
+        }
+        finally {
+            setLoading(undefined);
         }
 
     }
 
     const onRevokeAddress = async () => {
+        setLoading(REVOKE_MINTER);
         try {
             const tx = await collectionNFT.revokeMinter(addressInput.trim());
             await tx.wait();
@@ -101,10 +112,13 @@ function CollectionsListItem({
             console.info(`${addressInput.trim()} revoked successfully`);
             setSuccessMessage(`${addressInput.trim()} revoked successfully`);
             setSuccessOpen(true);
-
+            setAddressInput("");
         } catch (e: any) {
             setErrorMessage(e.reason);
             setErrorOpen(true);
+        }
+        finally {
+            setLoading(undefined);
         }
 
     }
@@ -130,27 +144,42 @@ function CollectionsListItem({
                         <div style={{fontWeight: 'bold'}}>({availableMinters} Minters)</div>
                     </Grid>
                     <Grid item xs={2}>
-                        <Button color={'secondary'} variant={'outlined'} onClick={selectCollection}>Add patent</Button>
+                        <Button color={'secondary'}
+                                variant={'outlined'}
+                                onClick={selectCollection}>
+                            Add patent
+                        </Button>
                     </Grid>
                 </Grid>
                 {
                     isOwner &&
-                        <Grid container paddingTop="20px" spacing={2} alignItems="center">
-                            <Grid item xs>
-                                <TextField value={addressInput} label="Minter's Address" placeholder="0x85fF0e5399f97..."
-                                           onChange={(e) => setAddressInput(e.target.value)}
-                                           variant='standard' fullWidth/>
-                            </Grid>
-                            <Grid item>
-                                <Button variant="outlined" onClick={onAddAddress} color="success">Add</Button>
-                            </Grid>
-                            <Grid item>
-                                <Button variant="outlined" onClick={onRevokeAddress} color="error">Revoke</Button>
-                            </Grid>
+                    <Grid container paddingTop="20px" spacing={2} alignItems="center">
+                        <Grid item xs>
+                            <TextField value={addressInput} label="Minter's Address" placeholder="0x85fF0e5399f97..."
+                                       onChange={(e) => setAddressInput(e.target.value)}
+                                       variant='standard' fullWidth/>
                         </Grid>
+                        <Grid item>
+                            <LoadingButton variant="outlined"
+                                           onClick={onAddAddress}
+                                           loading={loading === ADD_MINTER}
+                                           color="success">
+                                Add
+                            </LoadingButton>
+                        </Grid>
+                        <Grid item>
+                            <LoadingButton variant="outlined"
+                                           onClick={onRevokeAddress}
+                                           loading={loading === REVOKE_MINTER}
+                                           color="error">
+                                Revoke
+                            </LoadingButton>
+                        </Grid>
+                    </Grid>
                 }
             </CardContent>
         </Card>
     )
 }
+
 export default CollectionsListItem;

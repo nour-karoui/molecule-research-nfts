@@ -4,6 +4,7 @@ import {getCollectionNFT} from "../../services/initweb3";
 import * as crypto from "crypto-js";
 import {ipfs} from "../../services/uploadIPFS";
 import {Error, Success} from "../../services/responses";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface PatentFormProps {
     collectionName: string;
@@ -38,8 +39,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     const [errorOpen, setErrorOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [openSeaUrl, setOpenSeaUrl] = useState('');
-
+    const [loading, setLoading] = useState<boolean>(false)
     useEffect(() => {
         setCollectionElements();
     }, [collectionName]);
@@ -110,6 +110,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     }
 
     const submitPatent = async () => {
+        setLoading(true);
         try {
             const tokenId = await mintNFT();
             console.info('NFT created with tokenId: ' + tokenId);
@@ -140,14 +141,18 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
             await addTokenUriToNFT(tokenId, tokenURI);
             const result = await fetchTokenUri(tokenId);
             console.info(`token URI ${result} added to NFT with id ${tokenId}`);
-            setOpenSeaUrl(`https://testnets.opensea.io/assets/goerli/${collectionNFT.address}/${tokenId}`);
-            setSuccessMessage(`form submitted successfully, check your NFT at ${openSeaUrl}`);
+            const openSeaUrl = `https://testnets.opensea.io/assets/goerli/${collectionNFT.address}/${tokenId}`;
+            setSuccessMessage(`Form submitted successfully, check your NFT at ${openSeaUrl}`);
             if (patentAddedCallback) patentAddedCallback(collectionName.trim(), patentId.trim());
             setSuccessOpen(true);
+            resetForm();
         }
         catch (e: any) {
             setErrorMessage(e.reason);
             setErrorOpen(true);
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -169,6 +174,24 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
         const bytes = crypto.AES.decrypt(encryptedText, localStorage.getItem('key')!);
         const decryptedData = JSON.parse(bytes.toString(crypto.enc.Utf8));
         console.log(decryptedData);
+    }
+
+    const resetForm = () => {
+        setSubject("");
+        setSubjectValid(true);
+        setSubjectPristine(true);
+        setResearcher("");
+        setResearcherValid(true);
+        setResearcherPristine(true);
+        setUniversity("");
+        setUniversityValid(true);
+        setUniversityPristine(true);
+        setPatentId("");
+        setPatentIdValid(true);
+        setPatentIdPristine(true);
+        setInstitution("");
+        setInstitutionValid(true);
+        setInstitutionPristine(true);
     }
 
     return (
@@ -220,13 +243,14 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
             </Grid>
             <Grid container direction="row-reverse" marginTop={'20px'}>
                 <Grid item>
-                    <Button
+                    <LoadingButton
                         disabled={!(patentIdValid && researcherValid && institutionValid && universityValid && subjectValid)
                             || patentIdPristine || researcherPristine || institutionPristine || universityPristine || subjectPristine}
                         onClick={submitPatent}
+                        loading={loading}
                         variant='contained'>
                         Submit patent
-                    </Button>
+                    </LoadingButton>
                 </Grid>
             </Grid>
         </Box>
