@@ -11,22 +11,26 @@ interface PatentFormProps {
 
 function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     const [collectionNFT, setCollectionNFT] = useState<any>(null);
-    const [patentIdPristine, setPatentIdPristine] = useState(true);
-    const [researcherPristine, setResearcherPristine] = useState(true);
-    const [universityPristine, setUniversityPristine] = useState(true);
-    const [institutionPristine, setInstitutionPristine] = useState(true);
+
+    const [subject, setSubject] = useState("");
+    const [subjectValid, setSubjectValid] = useState(true);
+    const [subjectPristine, setSubjectPristine] = useState(true);
 
     const [patentId, setPatentId] = useState("");
     const [patentIdValid, setPatentIdValid] = useState(true);
+    const [patentIdPristine, setPatentIdPristine] = useState(true);
 
     const [researcher, setResearcher] = useState("");
     const [researcherValid, setResearcherValid] = useState(true);
+    const [researcherPristine, setResearcherPristine] = useState(true);
 
     const [university, setUniversity] = useState("");
     const [universityValid, setUniversityValid] = useState(true);
+    const [universityPristine, setUniversityPristine] = useState(true);
 
     const [institution, setInstitution] = useState("");
     const [institutionValid, setInstitutionValid] = useState(true);
+    const [institutionPristine, setInstitutionPristine] = useState(true);
 
     useEffect(() => {
         setCollectionElements();
@@ -42,6 +46,12 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
         const reg = new RegExp(/^[A-F]-[1-9]{5,7}\/[A-Z]{5,9}$/);
         setPatentIdValid(reg.test(value));
         setPatentId(value);
+    }
+
+    const validateSubject = (value: string) => {
+        setSubjectPristine(false);
+        setSubjectValid(value.trim() !== "");
+        setSubject(value.trim());
     }
 
     const validateResearcher = (value: string) => {
@@ -99,7 +109,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
     }
 
     const decryptDocument = async (encryptedText: string) => {
-        const bytes  = crypto.AES.decrypt(encryptedText,  localStorage.getItem('key')!);
+        const bytes = crypto.AES.decrypt(encryptedText, localStorage.getItem('key')!);
         const decryptedData = JSON.parse(bytes.toString(crypto.enc.Utf8));
         console.log(decryptedData);
     }
@@ -111,6 +121,14 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
                 <h2>Add patent to {collectionName} Collection</h2>
             </Grid>
             <Grid container>
+                <TextField label="Subject" value={subject}
+                           placeholder='E.g. hayfever'
+                           onChange={(e) => validateSubject(e.target.value)}
+                           error={!subjectValid}
+                           helperText={subjectValid ? '' : 'Field required'}
+                           variant='standard' fullWidth/>
+            </Grid>
+            <Grid container>
                 <TextField label="Lead Researcher" value={researcher}
                            onChange={(e) => validateResearcher(e.target.value)}
                            error={!researcherValid}
@@ -119,6 +137,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
             </Grid>
             <Grid container>
                 <TextField label="University" variant='standard' value={university}
+                           placeholder="Researcher's university"
                            onChange={(e) => validateUniversity(e.target.value)}
                            error={!universityValid}
                            helperText={universityValid ? '' : 'Field required'}
@@ -143,10 +162,11 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
             </Grid>
             <Grid container direction="row-reverse" marginTop={'20px'}>
                 <Grid item>
-                    <Button disabled={!(patentIdValid && researcherValid && institutionValid && universityValid)
-                        || patentIdPristine || researcherPristine || institutionPristine || universityPristine}
-                            onClick={submitPatent}
-                            variant='contained'>
+                    <Button
+                        disabled={!(patentIdValid && researcherValid && institutionValid && universityValid && subjectValid)
+                            || patentIdPristine || researcherPristine || institutionPristine || universityPristine || subjectPristine}
+                        onClick={submitPatent}
+                        variant='contained'>
                         Submit patent
                     </Button>
                 </Grid>
