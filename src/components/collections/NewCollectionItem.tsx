@@ -1,6 +1,7 @@
 import {Button, Card, CardContent, Grid, TextField} from "@mui/material";
-import {useState} from "react";
+import {SyntheticEvent, useState} from "react";
 import {collectionsFactory} from "../../services/initweb3";
+import {Error, Success} from "../../services/responses";
 
 interface NewCollectionItemProps {
     collectionAddedCallback?: () => any;
@@ -17,11 +18,37 @@ function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
     const [newNameIsPristine, setNewNameIsPristine] = useState(true);
     const [newSymbolIsPristine, setNewSymbolIsPristine] = useState(true);
 
+    const [successOpen, setSuccessOpen] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorOpen, setErrorOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSuccessClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSuccessOpen(false);
+    };
+
+    const handleErrorClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setErrorOpen(false);
+    };
+
     const onAddCollection = async () => {
-        const tx = await collectionsFactory.createNewCollection(newName.trim(), newSymbol.trim());
-        const result = await tx.wait();
-        console.log(result);
-        if (collectionAddedCallback) collectionAddedCallback();
+        try {
+            const tx = await collectionsFactory.createNewCollection(newName.trim(), newSymbol.trim());
+            await tx.wait();
+            if (collectionAddedCallback) collectionAddedCallback();
+            console.info(`new collection ${newName.trim()} added successfully`);
+            setSuccessMessage(`new collection ${newName.trim()} added successfully`);
+            setSuccessOpen(true);
+        } catch (e: any) {
+            setErrorMessage(e.reason);
+            setErrorOpen(true);
+        }
     }
 
     const onNewNameChange = (value: string) => {
@@ -38,6 +65,8 @@ function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
 
     return (
         <Card variant="outlined">
+            <Success open={successOpen} handleClose={handleSuccessClose} message={successMessage}></Success>
+            <Error open={errorOpen} handleClose={handleErrorClose} message={errorMessage}></Error>
             <CardContent style={{padding: '10px'}}>
                 <Grid container spacing={'10px'} >
                     <Grid item sx={{flexGrow: 1}}>
