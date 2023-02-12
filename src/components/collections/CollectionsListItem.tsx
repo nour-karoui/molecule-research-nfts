@@ -120,7 +120,7 @@ function CollectionsListItem({
                                           icon={<FiberManualRecordIcon style={{transform: 'scale(0.5)'}}/>}
                                           variant="outlined"/>}
                     </Grid>
-                    <Grid item xs>
+                    <Grid item xs={3}>
                         <span> {collection.name} </span>
                     </Grid>
                     <Grid item xs={2}>
@@ -129,7 +129,7 @@ function CollectionsListItem({
                     <Grid item xs={3}>
                         <div style={{fontWeight: 'bold'}}>({availableMinters} Minters)</div>
                     </Grid>
-                    <Grid item xs="auto">
+                    <Grid item xs={2}>
                         <Button color={'secondary'} variant={'outlined'} onClick={selectCollection}>Add patent</Button>
                     </Grid>
                 </Grid>
