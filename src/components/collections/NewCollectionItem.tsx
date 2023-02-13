@@ -93,11 +93,12 @@ function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
                     </Grid>
                     <Grid item>
                         <LoadingButton color={'secondary'}
+                                       style={{height: '100%'}}
                                        loading={loading === ADD_COLLECTION}
                                        disabled={!(newNameIsValid && newSymbolIsValid)
                                            || newSymbolIsPristine || newNameIsPristine}
                                        onClick={onAddCollection}
-                                       variant={'outlined'}>
+                                       variant={'contained'}>
                             Add Collection
                         </LoadingButton>
                     </Grid>

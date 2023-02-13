@@ -44,8 +44,10 @@ function CollectionsListItem({
     }, [collectionNFT])
 
     useEffect(() => {
-        if (collectionToUpdate && collectionToUpdate === collection.name)
+        if (collectionToUpdate && collectionToUpdate === collection.name) {
             setCollectionToUpdate(undefined);
+            updateNumberOfAvailableMinters().then();
+        }
     }, [collectionToUpdate])
 
     const setSmartContract = async () => {
