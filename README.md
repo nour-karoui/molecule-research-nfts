@@ -30,7 +30,7 @@ Make sure to create .env file following the **.env.example** file
 Run this command to install dependencies:
 ```shell
     cd molecule-truffle
-    npm install truffle
+    npm install
 ```
 
 **These are the main commands that would help you interact with our smart contracts:**
