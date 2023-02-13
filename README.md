@@ -4,7 +4,7 @@ HELLO <img src="https://raw.githubusercontent.com/MartinHeinz/MartinHeinz/master
 ## ✂️ How is this project divided?
 The project is divided into 3 main sections:
 1. ***Molecule-truffle:*** The truffle project, containing all the smart contracts used for this project and their deployments configurations.
-2. ***Molecule's platform:*** The Dapp that allows users to interact with our smart contracts, create collections containing NFTs and save their patents. [*Visit Molecule's test*](http://rvl-crowdfund-me.s3-website-us-east-1.amazonaws.com/)
+2. ***Molecule's platform:*** The Dapp that allows users to interact with our smart contracts, create collections containing NFTs and save their patents. [*Visit Molecule's test*](https://nour-karoui.github.io/molecule-research-nfts/)
 
 ## 🙌 What is Molecules Patent NFTs?
 It is a **decentralized app for NFT creation** hosted on **Goerli Testnet** built with ***Truffle Framework***, ***ReactJs*** and ***ethers.js*** library.
@@ -51,7 +51,7 @@ Run this command to install dependencies:
 
 ---  	
 
-> **The run the Faucet and Crowdfund you need both a Metamask wallet attached to your Browser, also you need some Goerli Ether**
+> **The run the DApp you need both a Metamask wallet attached to your Browser, also you need some Goerli Ether**
 
 > You can get some Goerli ETH on [This Faucet](https://goerlifaucet.com/).
 
