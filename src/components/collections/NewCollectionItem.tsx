@@ -1,11 +1,14 @@
-import {Button, Card, CardContent, Grid, TextField} from "@mui/material";
+import {Card, CardContent, Grid, TextField} from "@mui/material";
 import {SyntheticEvent, useState} from "react";
 import {collectionsFactory} from "../../services/initweb3";
 import {Error, Success} from "../../services/responses";
+import {LoadingButton} from "@mui/lab";
 
 interface NewCollectionItemProps {
     collectionAddedCallback?: () => any;
 }
+
+const ADD_COLLECTION = "Add Collection";
 
 function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
 
@@ -23,6 +26,8 @@ function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
     const [errorOpen, setErrorOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
+    const [loading, setLoading] = useState<string | undefined>();
+
     const handleSuccessClose = (event?: SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
@@ -38,6 +43,7 @@ function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
     };
 
     const onAddCollection = async () => {
+        setLoading(ADD_COLLECTION);
         try {
             const tx = await collectionsFactory.createNewCollection(newName.trim(), newSymbol.trim());
             await tx.wait();
@@ -48,6 +54,8 @@ function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
         } catch (e: any) {
             setErrorMessage(e.reason);
             setErrorOpen(true);
+        } finally {
+            setLoading(undefined);
         }
     }
 
@@ -68,7 +76,7 @@ function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
             <Success open={successOpen} handleClose={handleSuccessClose} message={successMessage}></Success>
             <Error open={errorOpen} handleClose={handleErrorClose} message={errorMessage}></Error>
             <CardContent style={{padding: '10px'}}>
-                <Grid container spacing={'10px'} >
+                <Grid container spacing={'10px'}>
                     <Grid item sx={{flexGrow: 1}}>
                         <TextField label="New Collection Name"
                                    placeholder="My Collection Name" fullWidth
@@ -84,13 +92,14 @@ function NewCollectionItem({collectionAddedCallback}: NewCollectionItemProps) {
                                    value={newSymbol} onChange={(e) => onNewSymbolChange(e.target.value)}/>
                     </Grid>
                     <Grid item>
-                        <Button color={'secondary'}
-                                disabled={!(newNameIsValid && newSymbolIsValid)
-                                    || newSymbolIsPristine || newNameIsPristine}
-                                onClick={onAddCollection}
-                                variant={'outlined'}>
+                        <LoadingButton color={'secondary'}
+                                       loading={loading === ADD_COLLECTION}
+                                       disabled={!(newNameIsValid && newSymbolIsValid)
+                                           || newSymbolIsPristine || newNameIsPristine}
+                                       onClick={onAddCollection}
+                                       variant={'outlined'}>
                             Add Collection
-                        </Button>
+                        </LoadingButton>
                     </Grid>
                 </Grid>
             </CardContent>

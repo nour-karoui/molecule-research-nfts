@@ -146,4 +146,4 @@ export const collectionsFactoryABI = [
     }
 ];
 
-export const collectionsFactoryAddress = '0xCBB110e40D59eD93bDf7A8347D27aa85C3bb1b7c';
+export const collectionsFactoryAddress = '0x87739c476BC464DFC6652c479fcD49c89b284358';

@@ -142,7 +142,7 @@ function PatentForm({collectionName, patentAddedCallback}: PatentFormProps) {
             const result = await fetchTokenUri(tokenId);
             console.info(`token URI ${result} added to NFT with id ${tokenId}`);
             const openSeaUrl = `https://testnets.opensea.io/assets/goerli/${collectionNFT.address}/${tokenId}`;
-            setSuccessMessage(`Form submitted successfully, check your NFT at ${openSeaUrl}`);
+            setSuccessMessage(`check your NFT at ${openSeaUrl} and token URI at ${tokenURI}`);
             if (patentAddedCallback) patentAddedCallback(collectionName.trim(), patentId.trim());
             setSuccessOpen(true);
             resetForm();
