@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/molecule-research-nfts/static/css/main.073c9b0a.css",
-    "main.js": "/molecule-research-nfts/static/js/main.7f746b19.js",
+    "main.js": "/molecule-research-nfts/static/js/main.2f98d8db.js",
     "static/js/787.5667f067.chunk.js": "/molecule-research-nfts/static/js/787.5667f067.chunk.js",
     "index.html": "/molecule-research-nfts/index.html",
     "main.073c9b0a.css.map": "/molecule-research-nfts/static/css/main.073c9b0a.css.map",
-    "main.7f746b19.js.map": "/molecule-research-nfts/static/js/main.7f746b19.js.map",
+    "main.2f98d8db.js.map": "/molecule-research-nfts/static/js/main.2f98d8db.js.map",
     "787.5667f067.chunk.js.map": "/molecule-research-nfts/static/js/787.5667f067.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.7f746b19.js"
+    "static/js/main.2f98d8db.js"
   ]
 }
