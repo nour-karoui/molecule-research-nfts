@@ -1,6 +1,18 @@
 HELLO <img src="https://raw.githubusercontent.com/MartinHeinz/MartinHeinz/master/wave.gif" width="30px"> This is Molecule's Patent NFTs
 ---
 
+<p>
+  <a href="https://github.com/nour-karoui/molecule-research-nfts#readme" target="_blank">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
+  </a>
+  <a href="https://github.com/nour-karoui/molecule-research-nfts/graphs/commit-activity" target="_blank">
+    <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
+  </a>
+  <a href="https://github.com/nour-karoui/molecule-research-nfts/blob/main/license" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/github/license/bishkou/password-pwnd" />
+  </a>
+</p>
+
 ## ✂️ How is this project divided?
 The project is divided into 3 main sections:
 1. ***Molecule-truffle:*** The truffle project, containing all the smart contracts used for this project and their deployments configurations.
@@ -51,7 +63,7 @@ Run this command to install dependencies:
 
 ---  	
 
-> **The run the DApp you need both a Metamask wallet attached to your Browser, also you need some Goerli Ether**
+> **To run the DApp you need both a Metamask wallet attached to your Browser, also you need some Goerli Ether**
 
 > You can get some Goerli ETH on [This Faucet](https://goerlifaucet.com/).
 
